@@ -67,7 +67,7 @@ cd backend
 # Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate        # Linux/macOS
-# venv\Scripts\activate         # Windows
+venv\Scripts\activate         # Windows
 
 # Install dependencies
 pip install -r requirements.txt
@@ -92,6 +92,8 @@ Admin panel: `http://localhost:8000/admin`
 
 ```bash
 cd frontend
+
+copy .env.local.example .env.local
 
 # Install dependencies
 npm install
