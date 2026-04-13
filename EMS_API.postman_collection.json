@@ -1,0 +1,385 @@
+{
+  "info": {
+    "name": "Employee Management System API",
+    "description": "Complete API collection for the Employee Management System built with Django REST Framework and JWT authentication.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "emp-mgmt-2024"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api", "type": "string" },
+    { "key": "access_token", "value": "", "type": "string" },
+    { "key": "refresh_token", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('access_token', res.tokens.access);",
+                  "  pm.collectionVariables.set('refresh_token', res.tokens.refresh);",
+                  "  pm.test('Registration successful', () => pm.response.to.have.status(201));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/register/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"password2\": \"SecurePass123!\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('access_token', res.access);",
+                  "  pm.collectionVariables.set('refresh_token', res.refresh);",
+                  "  pm.test('Login successful', () => pm.response.to.have.status(200));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('access_token', res.access);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/token/refresh/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/logout/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/auth/profile/"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/profile/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"phone\": \"+1234567890\",\n  \"department\": \"Engineering\",\n  \"bio\": \"Software engineer with 5 years experience\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/change-password/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"SecurePass123!\",\n  \"new_password\": \"NewPass456!\",\n  \"new_password2\": \"NewPass456!\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Forms",
+      "item": [
+        {
+          "name": "List All Forms",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/forms/"
+          }
+        },
+        {
+          "name": "List Active Forms",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/forms/active/"
+          }
+        },
+        {
+          "name": "Create Form",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/forms/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Onboarding Form\",\n  \"description\": \"Standard employee onboarding form\",\n  \"is_active\": true,\n  \"fields\": [\n    {\n      \"label\": \"Employee ID\",\n      \"field_name\": \"employee_id\",\n      \"field_type\": \"text\",\n      \"placeholder\": \"EMP-001\",\n      \"is_required\": true,\n      \"order\": 0,\n      \"options\": []\n    },\n    {\n      \"label\": \"Date of Birth\",\n      \"field_name\": \"date_of_birth\",\n      \"field_type\": \"date\",\n      \"is_required\": true,\n      \"order\": 1,\n      \"options\": []\n    },\n    {\n      \"label\": \"Employment Type\",\n      \"field_name\": \"employment_type\",\n      \"field_type\": \"select\",\n      \"is_required\": true,\n      \"order\": 2,\n      \"options\": [\"Full-time\", \"Part-time\", \"Contract\", \"Intern\"]\n    },\n    {\n      \"label\": \"Skills\",\n      \"field_name\": \"skills\",\n      \"field_type\": \"textarea\",\n      \"placeholder\": \"List your key skills\",\n      \"is_required\": false,\n      \"order\": 3,\n      \"options\": []\n    },\n    {\n      \"label\": \"Salary\",\n      \"field_name\": \"salary\",\n      \"field_type\": \"number\",\n      \"placeholder\": \"Annual salary in USD\",\n      \"is_required\": false,\n      \"order\": 4,\n      \"options\": []\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Form by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/forms/1/"
+          }
+        },
+        {
+          "name": "Get Form with Fields",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/forms/1/with_fields/"
+          }
+        },
+        {
+          "name": "Update Form",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/forms/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Onboarding Form\",\n  \"description\": \"Updated description\",\n  \"is_active\": true,\n  \"fields\": [\n    {\n      \"label\": \"Employee ID\",\n      \"field_name\": \"employee_id\",\n      \"field_type\": \"text\",\n      \"is_required\": true,\n      \"order\": 0,\n      \"options\": []\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Partial Update Form",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/forms/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description only\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Form",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "DELETE",
+            "url": "{{base_url}}/forms/1/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "List All Employees",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""]
+            }
+          }
+        },
+        {
+          "name": "List Employees — Search by Name",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/?search=John",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""],
+              "query": [{ "key": "search", "value": "John" }]
+            }
+          }
+        },
+        {
+          "name": "List Employees — Filter by Status",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/?status=active",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""],
+              "query": [{ "key": "status", "value": "active" }]
+            }
+          }
+        },
+        {
+          "name": "List Employees — Filter by Department",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/?department=Engineering",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""],
+              "query": [{ "key": "department", "value": "Engineering" }]
+            }
+          }
+        },
+        {
+          "name": "List Employees — Filter by Dynamic Field",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/?dynamic_field=employment_type&dynamic_value=Full-time",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""],
+              "query": [
+                { "key": "dynamic_field", "value": "employment_type" },
+                { "key": "dynamic_value", "value": "Full-time" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Employees — Pagination",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/employees/?page=1&page_size=10",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ""],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "page_size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Employee",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/employees/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"form\": 1,\n  \"first_name\": \"Alice\",\n  \"last_name\": \"Smith\",\n  \"email\": \"alice@company.com\",\n  \"phone\": \"+1-555-0101\",\n  \"department\": \"Engineering\",\n  \"position\": \"Senior Developer\",\n  \"status\": \"active\",\n  \"date_joined\": \"2024-01-15\",\n  \"dynamic_data\": {\n    \"employee_id\": \"EMP-001\",\n    \"date_of_birth\": \"1990-05-20\",\n    \"employment_type\": \"Full-time\",\n    \"skills\": \"Python, Django, React, PostgreSQL\",\n    \"salary\": 95000\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Employee by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/employees/1/"
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/employees/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"form\": 1,\n  \"first_name\": \"Alice\",\n  \"last_name\": \"Smith\",\n  \"email\": \"alice@company.com\",\n  \"phone\": \"+1-555-0101\",\n  \"department\": \"Engineering\",\n  \"position\": \"Lead Developer\",\n  \"status\": \"active\",\n  \"date_joined\": \"2024-01-15\",\n  \"dynamic_data\": {\n    \"employee_id\": \"EMP-001\",\n    \"employment_type\": \"Full-time\",\n    \"salary\": 105000\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Partial Update Employee",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/employees/1/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"on_leave\",\n  \"position\": \"Principal Engineer\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "DELETE",
+            "url": "{{base_url}}/employees/1/"
+          }
+        },
+        {
+          "name": "Employee Stats",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": "{{base_url}}/employees/stats/"
+          }
+        }
+      ]
+    }
+  ]
+}
